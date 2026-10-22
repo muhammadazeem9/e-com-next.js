@@ -43,10 +43,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">
-      <Link
-        href="/products"
-        className="text-sm text-neutral-500 hover:text-black"
-      >
+      <Link href="/products" className="text-sm text-ash hover:text-black">
         ← Back to products
       </Link>
 
@@ -56,7 +53,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {product.images.map((image, index) => (
             <div
               key={image.url}
-              className="relative aspect-[3/4] overflow-hidden bg-neutral-100"
+              className="relative aspect-[3/4] overflow-hidden bg-fog"
             >
               <Image
                 src={image.url}
@@ -72,9 +69,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Product information */}
         <div className="md:sticky md:top-8 md:self-start">
           {product.collectionName && (
-            <p className="text-xs uppercase tracking-widest text-neutral-500">
-              {product.collectionName}
-            </p>
+            <p className="text-sm text-ash">{product.collectionName}</p>
           )}
 
           <h1 className="mt-2 text-3xl font-semibold text-neutral-900">
@@ -83,15 +78,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           <p className="mt-3 text-xl">{formatPrice(product.price)}</p>
 
-          <p className="mt-6 leading-7 text-neutral-600">
-            {product.description}
-          </p>
+          <p className="mt-6 leading-7 text-ink">{product.description}</p>
 
           {/* Colors */}
           <div className="mt-8">
-            <p className="text-xs uppercase tracking-widest text-neutral-500">
-              Colors
-            </p>
+            <p className="text-xs uppercase tracking-widest text-ash">Colors</p>
 
             <div className="mt-2 flex flex-wrap gap-2">
               {product.colors.map((color) => (
@@ -108,9 +99,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Sizes and stock */}
           <div className="mt-6">
-            <p className="text-xs uppercase tracking-widest text-neutral-500">
-              Sizes
-            </p>
+            <p className="text-xs uppercase tracking-widest text-ash">Sizes</p>
 
             <div className="mt-2 flex flex-wrap gap-2">
               {sizes.map((size) => {

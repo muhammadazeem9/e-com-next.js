@@ -10,23 +10,16 @@ export const metadata: Metadata = {
 export default async function Products() {
   const products = await getProducts();
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Our Products
-        </h1>
+    <section className="mx-auto max-w-[1600px] px-5 py-10 md:px-8">
+      <h1 className="display text-[18vw] md:text-[10vw]">Shop</h1>
+      <p className="mt-4 text-sm text-ash">{products.length} pieces</p>
 
-        <p className="mt-2 text-gray-600">
-          Discover our collection of everyday essentials.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-2 gap-x-1 gap-y-10 md:grid-cols-4">
         {products.map((product, index) => (
           <ProductCard
             key={product.id}
             product={product}
-            priority={index < 3}
+            priority={index < 4}
           />
         ))}
       </div>

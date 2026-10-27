@@ -3,8 +3,9 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getProductBySlug } from "@/lib/products";
+import { getProductBySlug, getProductSlugs } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
+import AddToBag from "@/components/AddToBag";
 
 type ProductPageProps = PageProps<"/products/[slug]">;
 
@@ -26,6 +27,11 @@ export async function generateMetadata({
   };
 }
 
+export async function generateStaticParams() {
+  const slugs = await getProductSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
@@ -34,21 +40,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const sizes = [...new Set(product.variants.map((v) => v.size))];
-
-  const stockBySize = (size: string) =>
-    product.variants
-      .filter((v) => v.size === size)
-      .reduce((sum, v) => sum + v.stock, 0);
-
   return (
-    <section className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/products" className="text-sm text-ash hover:text-black">
+    <section className="mx-auto max-w-[1600px] px-5 py-10 md:px-8">
+      <Link href="/products" className="text-sm text-ash hover:text-ink">
         ← Back to products
       </Link>
 
       <div className="mt-6 grid gap-10 md:grid-cols-2">
-        {/* Product image placeholder */}
+        {/* Product images */}
         <div className="space-y-4">
           {product.images.map((image, index) => (
             <div
@@ -66,63 +65,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           ))}
         </div>
+
         {/* Product information */}
-        <div className="md:sticky md:top-8 md:self-start">
+        <div className="md:sticky md:top-24 md:self-start">
           {product.collectionName && (
             <p className="text-sm text-ash">{product.collectionName}</p>
           )}
 
-          <h1 className="mt-2 text-3xl font-semibold text-neutral-900">
+          <h1 className="mt-2 text-3xl font-semibold text-ink">
             {product.name}
           </h1>
 
           <p className="mt-3 text-xl">{formatPrice(product.price)}</p>
 
-          <p className="mt-6 leading-7 text-ink">{product.description}</p>
+          <p className="mt-6 max-w-md leading-7 text-ink">
+            {product.description}
+          </p>
 
-          {/* Colors */}
-          <div className="mt-8">
-            <p className="text-xs uppercase tracking-widest text-ash">Colors</p>
-
-            <div className="mt-2 flex flex-wrap gap-2">
-              {product.colors.map((color) => (
-                <span
-                  key={color.name}
-                  title={color.name}
-                  aria-label={color.name}
-                  className="h-6 w-6 rounded-full border border-neutral-300"
-                  style={{ backgroundColor: color.hex }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Sizes and stock */}
-          <div className="mt-6">
-            <p className="text-xs uppercase tracking-widest text-ash">Sizes</p>
-
-            <div className="mt-2 flex flex-wrap gap-2">
-              {sizes.map((size) => {
-                const stock = stockBySize(size);
-                const isOutOfStock = stock === 0;
-
-                return (
-                  <span
-                    key={size}
-                    title={isOutOfStock ? "Out of stock" : `${stock} available`}
-                    aria-disabled={isOutOfStock}
-                    className={`border px-3 py-2 text-sm ${
-                      isOutOfStock
-                        ? "text-neutral-300 line-through"
-                        : "text-neutral-800"
-                    }`}
-                  >
-                    {size}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
+          <AddToBag colors={product.colors} variants={product.variants} />
         </div>
       </div>
     </section>

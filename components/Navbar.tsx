@@ -1,9 +1,21 @@
+import { readCart } from "@/lib/cart";
 import Link from "next/link";
+import { Suspense } from "react";
 
 const links = [
   { href: "/products", label: "Shop" },
   { href: "/about", label: "About" },
 ];
+
+async function BagCount() {
+  const lines = await readCart();
+  const count = lines.reduce((sum, line) => sum + line.qty, 0);
+  return (
+    <Link href="/cart" className="hover:text-ash">
+      Bag ({count})
+    </Link>
+  );
+}
 
 export default function Navbar() {
   return (
@@ -18,7 +30,9 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <span>Bag (0)</span>
+          <Suspense fallback={<span>Bag</span>}>
+            <BagCount />
+          </Suspense>
         </div>
       </nav>
     </header>

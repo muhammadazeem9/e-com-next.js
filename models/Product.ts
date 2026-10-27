@@ -48,5 +48,7 @@ const productSchema = new Schema(
   { timestamps: true },
 );
 
+productSchema.index({ "variants.sku": 1 });
+
 export const ProductModel: Model<any> =
   models.Product || model("Product", productSchema);

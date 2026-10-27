@@ -1,28 +1,43 @@
-import ProductCard from "@/components/ProductCard";
-import { getProducts } from "@/lib/products";
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import ProductFilters from "@/components/ProductFilters";
+import ProductGrid from "@/components/ProductGrid";
+import ProductGridSkeleton from "@/components/ProductGridSkeleton";
+import { parseFilters } from "@/lib/products";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "Browse our collection of everyday essentials.",
+  title: "Shop",
+  description: "Browse outerwear, tops, bottoms, dresses and accessories.",
 };
 
-export default async function Products() {
-  const products = await getProducts();
+export default function Products({ searchParams }: PageProps<"/products">) {
   return (
     <section className="mx-auto max-w-[1600px] px-5 py-10 md:px-8">
       <h1 className="display text-[18vw] md:text-[10vw]">Shop</h1>
-      <p className="mt-4 text-sm text-ash">{products.length} pieces</p>
 
-      <div className="mt-10 grid grid-cols-2 gap-x-1 gap-y-10 md:grid-cols-4">
-        {products.map((product, index) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            priority={index < 4}
-          />
-        ))}
-      </div>
+      <Suspense fallback={<ProductGridSkeleton />}>
+        <Shop searchParams={searchParams} />
+      </Suspense>
     </section>
+  );
+}
+
+async function Shop({
+  searchParams,
+}: {
+  searchParams: PageProps<"/products">["searchParams"];
+}) {
+  const filters = parseFilters(await searchParams);
+
+  return (
+    <>
+      <ProductFilters filters={filters} />
+      <Suspense
+        key={JSON.stringify(filters)}
+        fallback={<ProductGridSkeleton />}
+      >
+        <ProductGrid filters={filters} />
+      </Suspense>
+    </>
   );
 }
